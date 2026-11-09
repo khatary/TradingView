@@ -22,12 +22,13 @@ export default function App() {
     const vs=chart.addSeries(HistogramSeries,{priceFormat:{type:'volume'},priceScaleId:'volume',lastValueVisible:false,priceLineVisible:false});
     vs.priceScale().applyOptions({scaleMargins:{top:0.82,bottom:0}});
     const os=chart.addSeries(LineSeries,{color:'#f5a623',lineWidth:2,priceLineVisible:false,lastValueVisible:false});
-    const rs=chart.addSeries(LineSeries,{color:'#9b8cff',lineWidth:2,priceScaleId:'rsi',priceLineVisible:false,lastValueVisible:false});
+    const rs=chart.addSeries(LineSeries,{color:'#9b8cff',lineWidth:2,priceScaleId:'rsi',priceLineVisible:false,lastValueVisible:false,visible:false});
     rs.priceScale().applyOptions({scaleMargins:{top:0.1,bottom:0.1}});
     chartRef.current=chart;candleRef.current=cs;volumeRef.current=vs;overlayRef.current=os;rsiRef.current=rs;
     const resize=new ResizeObserver(()=>chart.applyOptions({width:chartEl.current?.clientWidth||800,height:chartEl.current?.clientHeight||430}));resize.observe(chartEl.current);
     return()=>{resize.disconnect();chart.remove();chartRef.current=null;};
   },[dark]);
+  useEffect(()=>{rsiRef.current?.applyOptions({visible:showRSI});},[showRSI]);
   useEffect(()=>{if(!candles.length||!candleRef.current)return;
     candleRef.current.setData(candles.map(c=>({...c,time:c.time as UTCTimestamp})));
     volumeRef.current.setData(candles.map(c=>({time:c.time as UTCTimestamp,value:c.volume||0,color:c.close>=c.open?'rgba(22,185,129,.35)':'rgba(239,83,80,.35)'})));
