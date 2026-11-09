@@ -14,7 +14,7 @@ export default function App() {
   const chartEl=useRef<HTMLDivElement>(null), chartRef=useRef<IChartApi|null>(null), candleRef=useRef<any>(null), volumeRef=useRef<any>(null), overlayRef=useRef<any>(null), rsiRef=useRef<any>(null);
   const filtered=symbols.filter(s=>(s.symbol+' '+s.label).toLowerCase().includes(query.toLowerCase()));
   const fmt=(n:number)=>n.toLocaleString('en-US',{maximumFractionDigits:n<10?5:2});
-  useEffect(()=>{let live=true;setLoading(true);setError('');setCandles([]);loadHistory(symbol,interval).then(rows=>{if(live){setCandles(rows);setPrice(rows.at(-1)?.close||0);setLoading(false);}}).catch(e=>{if(live){setError(e.message||'خطا در دریافت داده');setLoading(false);}});return()=>{live=false;};},[symbol,interval]);
+  useEffect(()=>{let live=true;setLoading(true);setError('');setCandles([]);setPrice(0);loadHistory(symbol,interval).then(rows=>{if(live){setCandles(rows);setPrice(rows.at(-1)?.close||0);setLoading(false);}}).catch(e=>{if(live){setError(e.message||'خطا در دریافت داده');setLoading(false);}});return()=>{live=false;};},[symbol,interval]);
   useEffect(()=>{if(!candles.length)return;const onTick=(p:number)=>{setPrice(p);setPrices(old=>({...old,[symbol.symbol]:p}));};
     const stop=symbol.provider==='binance'?connectCryptoTicker(symbol.symbol,onTick):connectTwelveTicker(symbol.symbol,onTick);return stop;},[symbol,candles.length]);
   useEffect(()=>{
